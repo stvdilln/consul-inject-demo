@@ -18,22 +18,27 @@ git clone git@github.com:stvdilln/consul-inject-demo.git
 cd consul-inject 
 ./clone-consul-helm
 ```
-This demonstration has a version of values.yaml.  Field values I changed from default when I wrote this:
+This demonstration has a version of values.yaml.  In the included copy of values.yaml the following fields were changed.
 - global.bootstrapACLS: true
 - global.grpc: true
 - ui.service.type: LoadBalancer  
 - connectInject.enabled: true
+
+
+## Security Warning
+My changes enable a loadbalancer on the Consul UI. Depending on your cloud provider this may be exposed to the public.  When the load balancer completes, please verify that it is not running on a public IP address.  I have added annotations to try and prevent that. ACLs are enabled in the config, but you still don't want your consul-ui exposed to the world.  
+
 
 We now will intall the consul components with helm.  This command assumes the kubectl is configured to correct cluster.  You will need helm installed on your machine and the K8s cluster (helm init).
 ```bash
    helm install --name consul -f values.yaml ./consul-helm 
 ```
 
+
+
 Wait for the dust to settle, you should have 3 server consul pods, and 3 clients.   The load balancer for the UI can take awhile `kubectl get service` and see when the load balancer completes.  It is best to have the UI working so that you can see the 
 services you are creating.  Since ACLs are enabled, the UI will show only minimal information.  To 'login' to the UI you need a token, which there are several stored in the kubernetes secrets.  This command will get the master token which is not best practice for logging into the UI except for a quick demostration.  
 
-## Security Warning
-When the load balancer completes, please verify that it is not running on a public IP address.  I have added annotations to try and prevent that. ACLs are enabled in the config, but you still don't want your consul-ui exposed to the world.  
 
 
 ```
