@@ -4,10 +4,10 @@ This is a demonstration on how to get connect-inject working with the helm chart
 
 ## Prerequisites
 
-- helm installed on this machine and tiller installed.  See install-helm directory
+- helm installed on this machine and tiller installed.  
 - kubectl configured and pointed to the k8s cluster you want to test with.
 - This will work on osx and linux as is, on a windows client just examine any of the simple scripts and run the appropriate commands.
-- I have only tested this with a 3 node cloud based k8s cluster.  I do not know how this performs on minikube, this is probably something that doesn't translate well to minikube.
+- I have only tested this with a 3 node cloud based k8s cluster.  I've tested with AKS and will soon test AWS.  I do not know how this performs on minikube, this is probably something that doesn't translate well to minikube.
 - The consul-helm requests 10gb storage on each server node by default.  You will need to have sufficient storages on your nodes.
 
 
