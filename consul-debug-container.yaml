@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: consul-debug-container
+spec:
+  serviceAccountName: static-client
+  containers:
+    - name: static-client
+      image: consul:1.6.1
+      command: [ "/bin/sh", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]
+      env:
+      - name: CONSUL_HTTP_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: consul-consul-bootstrap-acl-token 
+            key: token
+      - name: CONSUL_HTTP_ADDR  
+        value: http://consul-consul-server:8500
+         

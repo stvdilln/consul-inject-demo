@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  # This must match the first container name or the the value in "consul.hashicorp.com/connect-service":
+  name: "static-client"
+
+
+---
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: static-client
+  annotations:
+    "consul.hashicorp.com/connect-inject": "true"
+    # The first half is the name that matches the servers "consul.hashicorp.com/connect-service"
+    # The 1234 is the local port that we want this service to be proxied to.
+    # In the container port 1234 is tunneled to the server port (via Consul Connect and Envoy)
+    "consul.hashicorp.com/connect-service-upstreams": "demo-helloworld:1234"
+spec:
+  serviceAccountName: static-client
+  containers:
+    - name: static-client
+      image: tutum/curl:latest
+      # Just spin & wait forever, we'll use `kubectl exec` to demo
+      command: [ "/bin/sh", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]

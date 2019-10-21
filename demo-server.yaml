@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  # This must match "consul.hashicorp.com/connect-service":
+  name: demo-helloworld
+
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: consul-inject-demo-server
+spec:
+  template:
+    metadata:
+      name: consul-connect-sbd
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        # Must match service account (above)
+        "consul.hashicorp.com/connect-service": "demo-helloworld"
+      labels:
+        app: consul-inject-demo-server
+    # pod specification
+    spec:
+      serviceAccountName: demo-helloworld
+      containers:
+      - image: karthequian/helloworld:latest
+        name: helloworld
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
