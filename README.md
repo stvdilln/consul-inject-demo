@@ -55,16 +55,30 @@ When you run that command you should see new services appear on the UI services 
 ### Start the Client
 ```kubectl apply -f demo-client.yaml```
 
-This will create a pod static-client, that you can open a shell into:
-`kubectl exec -it static-client -- bash`
+This will create a pod demo-client, that you can open a shell into:
+`kubectl exec -it demo-client -- bash`
 
 Poking around in the above shell.  `netstat -nltp` shows 3 ports, port 20000 is inbound envoy traffic to the consul-connect sidecar, port 19000 is another envoy port.  Port 1234 is the port that we opened as a tunnel to our serivce.  Look at the demo-client.yaml and demo-server.yaml for the annotations that creates this port.  Before we test out the connection we 
 need to authorize the connection in consul.  In the UI -> Intentions -> Create
-- source service: static-client
+- source service: demo-client
 - Destination Service: demo-helloworld
 - Allow
 
-Once you have set the intentions you can execute `curl http://localhost:1234/` in the client shell and should retreive a web page.
+If you do not want to use the GUI, you can create the consul
+debug container below and run these CLIs to create the intent.
+```
+stevedi$ k exec -it consul-debug-container -- sh
+/ # consul catalog services
+consul
+demo-client
+demo-client-sidecar-proxy
+demo-helloworld
+demo-helloworld-sidecar-proxy
+/ # consul intention create -allow demo-client demo-helloworld
+Created: demo-client => demo-helloworld (allow)
+``` 
+
+Once you have set the intentions you can execute `curl http://localhost:1234/` in the client shell and should retreive a web page.  There are also environment variables you can use for the service name and port.
 
 ### Bonus
 I have created a container `kubectl apply -f consul-debug-container` which will launch a consul client with appropriate acls to access the consul cluster.  You can:
