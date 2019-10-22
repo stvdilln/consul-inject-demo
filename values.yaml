@@ -292,10 +292,10 @@ ui:
     enabled: true
     type: LoadBalancer
     annotations: |
-      service.beta.kubernetes.io/azure-load-balancer-internal: true
-      service.beta.kubernetes.io/aws-load-balancer-internal: true
+      service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+      service.beta.kubernetes.io/aws-load-balancer-internal: "true"
       cloud.google.com/load-balancer-type: "Internal"
-      
+
     # Additional ServiceSpec values
     # This should be a multi-line string mapping directly to a Kubernetes
     # ServiceSpec object.
