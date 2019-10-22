@@ -4,7 +4,7 @@ kind: Pod
 metadata:
   name: consul-debug-container
 spec:
-  serviceAccountName: static-client
+  #serviceAccountName: consul-debug-container
   containers:
     - name: static-client
       image: consul:1.6.1
