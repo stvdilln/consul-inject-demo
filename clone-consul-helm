@@ -1,5 +1,0 @@
-#!/bin/bash
-set -eu
-if [ ! -d "consul-helm" ]; then
-  git clone --single-branch --branch v0.11.0 https://github.com/hashicorp/consul-helm.git
-fi

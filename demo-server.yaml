@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  # This must match "consul.hashicorp.com/connect-service":
+  # This must match annotation "consul.hashicorp.com/connect-service":
   name: demo-helloworld
 
 ---
@@ -12,11 +12,22 @@ metadata:
 spec:
   template:
     metadata:
-      name: consul-connect-sbd
+      name: consul-connect-demo-server
       annotations:
+        # https://www.consul.io/docs/platform/k8s/connect.html
         "consul.hashicorp.com/connect-inject": "true"
-        # Must match service account (above)
-        "consul.hashicorp.com/connect-service": "demo-helloworld"
+        # Must match service account (above), this defaults to the 
+        # name of the first container in the pod.  If ACLs are 
+        # means:
+        # The ServiceAccount.Name must match
+        #   pod.spec.conainers[0].name OR
+        #   You can override that name here and explicitly match 
+        #   the servicename, regardless of what the first pod name is.
+        #"consul.hashicorp.com/connect-service": "demo-helloworld"
+        # This annotation is unecessary in this case, the First Port 
+        # on the Fist Pod is the default exposed port.  You 
+        # can explicitly set it here.
+        #"consul.hashicorp.com/connect-service-port": 80
       labels:
         app: consul-inject-demo-server
     # pod specification
@@ -24,7 +35,10 @@ spec:
       serviceAccountName: demo-helloworld
       containers:
       - image: karthequian/helloworld:latest
-        name: helloworld
+        # The name of the first container in the pod 
+        # Must match The Service Account Name.
+        # You can override with annotation consul.hashicorp.com/connect-service
+        name: demo-helloworld
         resources:
           requests:
             cpu: 100m

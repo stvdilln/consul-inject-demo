@@ -1,0 +1,49 @@
+# These are the setting necessary to run a self-contained consul 
+# ecosystem within a single kubernetes cluster. It is possbile to
+# connect this cluster to an outside (of kubernetes) and have 
+# resources exposed in the cluster availabe to the World through
+# mesh gateways.  When I wrote this, there were issues with mesh
+# gateways and inter cluster communications, so this config file
+# is just for a single cluster environment.
+
+# Be Careful of typos in this file, if you mistype a key name
+# then the default value will be used and you get no waring.
+
+global:
+  # in order to set intentions and control which microservices 
+  # communicate then you need to enable ACLs. You can also control
+  # who talks to who via the annotations in the pods.  
+  bootstrapACLs: true
+  #
+  # Enable gossip encryption between Consul Nodes. This is the name
+  # of a kubernetes secret that must be set before running the helm chart.
+  # The secret can be created by running:
+  #    kubectl create secret generic consul-gossip-encryption-key \
+  #      --from-literal=key=$(consul keygen).
+  #
+  #gossipEncryption:
+  #  secretName: "consul-gossip-encryption-key"
+  #  secretKey: "key"
+
+client:
+  # The envoy/consul connect needs gRPC enabled
+  grpc: true
+
+ui: 
+  # This is the default, just repeating here so you can easilty shut it off.
+  enabled: true
+  service:
+    # Create a service that fronts the Consul UI, and make it a
+    # loadbalancer type
+    enabled: true
+    type: LoadBalancer
+    # If you have VPN connectivity then you can enable these annotations
+    # which will create a load balancer on private IPs instead of public.
+    #annotations:
+    #  service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    #  service.beta.kubernetes.io/aws-load-balancer-internal: "true"
+    #  cloud.google.com/load-balancer-type: "Internal"  
+
+connectInject:
+  # enable connect inject
+  enabled: true
